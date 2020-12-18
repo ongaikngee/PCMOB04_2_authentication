@@ -11,17 +11,17 @@ const Stack = createStackNavigator();
 export default function App() {
 	return (
 		<NavigationContainer>
-			<Stack.Navigator>
+			<Stack.Navigator mode="modal">
+				<Stack.Screen
+					name="Chat"
+					component={ChatScreen}
+					options={{ title: 'Chat App', headerStyle: styles.header }}
+				/>
 				<Stack.Screen
 					name="Login"
 					component={LoginScreen}
 					options={{ title: 'Slackers Huts', headerStyle: styles.header, headerShown: false }}
 					
-				/>
-				<Stack.Screen
-					name="Chat"
-					component={ChatScreen}
-					options={{ title: 'Chat App', headerStyle: styles.header, headerShown: false }}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>
