@@ -15,15 +15,22 @@ import firebase from '../database/firebaseDB';
 export default function LoginScreen({ navigation }) {
 	const [ email, setEmail ] = useState('');
 	const [ password, setPassword ] = useState('');
-	const db = firebase.firestore().collection('users');
+	const [errorText, setErrorText] = useState("");
+	const auth = firebase.auth();
 
 	const login = () => {
-		const newUser = {
-			email: 'ongaikngee@gmail.com',
-			password: '123'
-		};
+		Keyboard.dismiss();
 
-		db.add(newUser);
+		auth
+			.signInWithEmailAndPassword(email, password)
+			.then((userCredential) => {
+				console.log('Signed In');
+				navigation.navigate('Chat', { email });
+			})
+			.catch((error) => {
+				console.log('Error!');
+				setErrorText(error.message);
+			});
 	};
 
 	return (
@@ -35,19 +42,26 @@ export default function LoginScreen({ navigation }) {
 					style={styles.textInput}
 					placeholder="Enter Email"
 					value={email}
-					onChangeText={(text) => setEmail(text)}
+					onChangeText={(input) => setEmail(input)}
+					autoCorrect={true}
+					keyboardType="email-address"
+					autoCapitalize="none"
+					autoCompleteType="email"
 				/>
 				<Text style={styles.label}>Password</Text>
 				<TextInput
 					style={styles.textInput}
 					placeholder="Enter Password"
 					value={password}
-					onChangeText={(password) => setPassword(password)}
+					onChangeText={(input) => setPassword(input)}
 					secureTextEntry={true}
+					autoCapitalize="none"
+					autoCompleteType="password"
 				/>
 				<TouchableOpacity onPress={login} style={styles.button}>
 					<Text style={[ styles.label, { color: '#D1B490' } ]}>Log in</Text>
 				</TouchableOpacity>
+				<Text style={styles.errorText}>{errorText}</Text>
 				<Button title="Go to Chat" onPress={() => navigation.navigate('Chat')} />
 			</View>
 		</TouchableWithoutFeedback>
@@ -59,15 +73,15 @@ const styles = StyleSheet.create({
 		padding: 20,
 		justifyContent: 'space-around',
 		height: '100%',
-        backgroundColor: '#D1B490',
-        paddingTop:100,
-        paddingBottom:200,
+		backgroundColor: '#D1B490',
+		paddingTop: 100,
+		paddingBottom: 200
 	},
 	header: {
 		fontSize: 36,
 		fontWeight: 'bold',
-        color: '#885A89',
-        marginBottom:30,
+		color: '#885A89',
+		marginBottom: 30
 	},
 	label: {
 		fontSize: 22,
@@ -79,13 +93,20 @@ const styles = StyleSheet.create({
 		height: 40,
 		justifyContent: 'center',
 		alignItems: 'center',
-        borderRadius: 25,
-        marginTop:20,
+		borderRadius: 25,
+		marginTop: 20
 	},
 	textInput: {
 		borderWidth: 1,
 		borderColor: '#EE7B30',
 		padding: 10,
-		fontSize: 22,
+		fontSize: 22
+	},
+	errorText:{
+		color:"red",
+		marginTop:20,
+		marginLeft:20,
+		marginRight:20,
+		height:40,
 	}
 });

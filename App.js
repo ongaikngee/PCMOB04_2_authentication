@@ -12,12 +12,16 @@ export default function App() {
 	return (
 		<NavigationContainer>
 			<Stack.Navigator>
-				<Stack.Screen name="Login" component={LoginScreen}
-					options={{ title: 'Ti-Ti-Gong', headerStyle: styles.header } }/>
+				<Stack.Screen
+					name="Login"
+					component={LoginScreen}
+					options={{ title: 'Slackers Huts', headerStyle: styles.header, headerShown: false }}
+					
+				/>
 				<Stack.Screen
 					name="Chat"
 					component={ChatScreen}
-					options={{ title: 'Chat App', headerStyle: styles.header  }}
+					options={{ title: 'Chat App', headerStyle: styles.header, headerShown: false }}
 				/>
 			</Stack.Navigator>
 		</NavigationContainer>
@@ -30,8 +34,8 @@ const styles = StyleSheet.create({
 		backgroundColor: '#fff',
 		alignItems: 'center',
 		justifyContent: 'center'
-  },
-  header:{
-    backgroundColor:"#EE7B30",
-  }
+	},
+	header: {
+		backgroundColor: '#EE7B30'
+	}
 });
