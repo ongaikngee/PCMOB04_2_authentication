@@ -9,16 +9,25 @@ export default function SignUpScreen({ navigation }) {
 	const [ password, setPassword ] = useState('');
 	const [ cPassword, setCPassword ] = useState('');
 	const [ feedback, setFeedback ] = useState('');
+	const [ avatar, setAvatar ] = useState('');
+
+	// const API_URL = 'https://randomuser.me/api/?inc=picture';
 
 	const auth = firebase.auth();
-	// const db = firebase.firestore().collection("todos");
 
 	const signup = () => {
 		const formValid = formValidation();
 		if (formValid) {
+			// fetch(API_URL)
+			// 	.then((response) => response.json())
+			// 	.then((responseData) => {
+			// 		setAvatar(responseData.results[0].picture.large);
+			// 	})
+			// 	.catch((error) => console.log(error));
+
 			auth
 				.createUserWithEmailAndPassword(email, password)
-				.then((userCrediatail) => navigation.navigate('Login'))
+				.then((user) => navigation.navigate('Login'))
 				.catch((error) => setFeedback(error.message));
 		}
 	};
@@ -37,6 +46,15 @@ export default function SignUpScreen({ navigation }) {
 		return true;
 	};
 
+	// const randomUser = () => {
+	// 	fetch(API_URL)
+	// 		.then((response) => response.json())
+	// 		.then((responseData) => {
+	// 			setAvatar(JSON.stringify(responseData.results[0].picture.large));
+	// 		})
+	// 		.catch((error) => console.log(error));
+	// };
+
 	return (
 		<KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'padding' : 'height'}>
 			<View style={styles.container}>
@@ -45,6 +63,7 @@ export default function SignUpScreen({ navigation }) {
 				<TextInput
 					style={styles.textInput}
 					placeholder="Enter your email"
+					keyboardType="email-address"
 					value={email}
 					onChangeText={(item) => setEmail(item)}
 				/>
@@ -68,10 +87,14 @@ export default function SignUpScreen({ navigation }) {
 					<TouchableOpacity onPress={signup} style={styles.button}>
 						<Text style={[ styles.labelText, { color: '#D1B490' } ]}>Sign up</Text>
 					</TouchableOpacity>
-                    <TouchableOpacity onPress={()=> navigation.navigate("Login")} >
-                        <Text style={[styles.labelText,{paddingLeft:15,paddingTop:15,}]}>Cancel</Text>
-                    </TouchableOpacity>
+					<TouchableOpacity onPress={() => navigation.navigate('Login')}>
+						<Text style={[ styles.labelText, { paddingLeft: 15, paddingTop: 15 } ]}>Cancel</Text>
+					</TouchableOpacity>
 				</View>
+				{/* <TouchableOpacity style={styles.button} onPress={randomUser}>
+					<Text>Random User</Text>
+				</TouchableOpacity>
+				<Text>{avatar}</Text> */}
 				<StatusBar
 					backgroundColor="red"
 					hidden="false"
@@ -100,19 +123,19 @@ const styles = StyleSheet.create({
 	},
 	labelText: {
 		fontSize: 22,
-        color: '#EE7B30',
+		color: '#EE7B30'
 	},
 	textInput: {
 		borderWidth: 1,
 		borderColor: '#EE7B30',
 		fontSize: 22,
-        padding: 10,
-        marginBottom:20,
-    },
-    buttonContainer:{
+		padding: 10,
+		marginBottom: 20
+	},
+	buttonContainer: {
 		flexDirection: 'row',
-		alignItems: 'center',
-    },
+		alignItems: 'center'
+	},
 	button: {
 		backgroundColor: '#EE7B30',
 		width: 200,
