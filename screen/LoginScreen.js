@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
 	View,
 	Text,
@@ -14,7 +14,7 @@ import firebase from '../database/firebaseDB';
 export default function LoginScreen({ navigation }) {
 	const [ email, setEmail ] = useState('');
 	const [ password, setPassword ] = useState('');
-	const [errorText, setErrorText] = useState("");
+	const [ errorText, setErrorText ] = useState('');
 	const auth = firebase.auth();
 
 	const login = () => {
@@ -31,6 +31,10 @@ export default function LoginScreen({ navigation }) {
 				setErrorText(error.message);
 			});
 	};
+
+	// const signup = () => {
+	// 	console.log('Sign up');
+	// };
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -57,11 +61,16 @@ export default function LoginScreen({ navigation }) {
 					autoCapitalize="none"
 					autoCompleteType="password"
 				/>
-				<TouchableOpacity onPress={login} style={styles.button}>
-					<Text style={[ styles.label, { color: '#D1B490' } ]}>Log in</Text>
-				</TouchableOpacity>
+				<View style={styles.signContainer}>
+					<TouchableOpacity onPress={login} style={styles.button}>
+						<Text style={[ styles.label, { color: '#D1B490' } ]}>Log in</Text>
+					</TouchableOpacity>
+					<TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+						<Text style={styles.signUpText}>Sign Up</Text>
+					</TouchableOpacity>
+				</View>
 				<Text style={styles.errorText}>{errorText}</Text>
-				<Button title="Go to Chat" onPress={() => navigation.navigate('Chat')} />
+				{/* <Button title="Go to Chat" onPress={() => navigation.navigate('Chat')} /> */}
 			</View>
 		</TouchableWithoutFeedback>
 	);
@@ -101,11 +110,23 @@ const styles = StyleSheet.create({
 		padding: 10,
 		fontSize: 22
 	},
-	errorText:{
-		color:"red",
-		marginTop:20,
-		marginLeft:20,
-		marginRight:20,
-		height:40,
+	errorText: {
+		color: 'red',
+		marginTop: 20,
+		marginLeft: 20,
+		marginRight: 20,
+		height: 40
+	},
+	signContainer: {
+		flexDirection: 'row',
+		alignItems: 'center',
+	},
+	signUpText: {
+		fontSize: 24,
+		alignSelf:'center',
+		justifyContent:'center',
+		paddingLeft:20,
+		paddingTop:15,
+		color:"#EE7B30",
 	}
 });
