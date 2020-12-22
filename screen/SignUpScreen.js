@@ -11,23 +11,17 @@ export default function SignUpScreen({ navigation }) {
 	const [ feedback, setFeedback ] = useState('');
 	const [ avatar, setAvatar ] = useState('');
 
-	// const API_URL = 'https://randomuser.me/api/?inc=picture';
 
 	const auth = firebase.auth();
 
 	const signup = () => {
 		const formValid = formValidation();
 		if (formValid) {
-			// fetch(API_URL)
-			// 	.then((response) => response.json())
-			// 	.then((responseData) => {
-			// 		setAvatar(responseData.results[0].picture.large);
-			// 	})
-			// 	.catch((error) => console.log(error));
-
 			auth
 				.createUserWithEmailAndPassword(email, password)
-				.then((user) => navigation.navigate('Login'))
+				.then((user) => {
+					console.log(JSON.stringify(user.uid));
+				})
 				.catch((error) => setFeedback(error.message));
 		}
 	};
@@ -45,15 +39,6 @@ export default function SignUpScreen({ navigation }) {
 		}
 		return true;
 	};
-
-	// const randomUser = () => {
-	// 	fetch(API_URL)
-	// 		.then((response) => response.json())
-	// 		.then((responseData) => {
-	// 			setAvatar(JSON.stringify(responseData.results[0].picture.large));
-	// 		})
-	// 		.catch((error) => console.log(error));
-	// };
 
 	return (
 		<KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'padding' : 'height'}>
@@ -91,10 +76,6 @@ export default function SignUpScreen({ navigation }) {
 						<Text style={[ styles.labelText, { paddingLeft: 15, paddingTop: 15 } ]}>Cancel</Text>
 					</TouchableOpacity>
 				</View>
-				{/* <TouchableOpacity style={styles.button} onPress={randomUser}>
-					<Text>Random User</Text>
-				</TouchableOpacity>
-				<Text>{avatar}</Text> */}
 				<StatusBar
 					backgroundColor="red"
 					hidden="false"

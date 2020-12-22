@@ -22,19 +22,14 @@ export default function LoginScreen({ navigation }) {
 
 		auth
 			.signInWithEmailAndPassword(email, password)
-			.then((userCredential) => {
-				console.log('Signed In');
-				// navigation.navigate('Chat', { email });
+			.then((user) => {
+				console.log(user);
 			})
 			.catch((error) => {
 				console.log('Error!');
 				setErrorText(error.message);
 			});
 	};
-
-	// const signup = () => {
-	// 	console.log('Sign up');
-	// };
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
