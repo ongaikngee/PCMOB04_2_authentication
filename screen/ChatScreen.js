@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Button } from 'react-native';
 import firebase from '../database/firebaseDB';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -7,7 +7,9 @@ import { GiftedChat } from 'react-native-gifted-chat';
 // const db = firebase.firestore().collection('messages');
 
 export default function ChatScreen({ navigation, route }) {
-	const db = firebase.firestore().collection('rooms').doc('rooms').collection(route.params.room);
+
+	//Check if route.params.room is valid
+	const db = firebase.firestore().collection(route.params.room);
 	const auth = firebase.auth();
 
 	const [ messages, setMessages ] = useState([]);
@@ -16,48 +18,14 @@ export default function ChatScreen({ navigation, route }) {
 	const [ userPhoto, setUserPhoto ] = useState('');
 	const [ userName, setUserName ] = useState('');
 
-	const API_URL = 'https://randomuser.me/api/?inc=picture,name';
-
-	let photoURL = null;
-	let displayName = null;
-
 	useEffect(() => {
 		// This is the listener for authentication
 		const unsubscribeAuth = auth.onAuthStateChanged((user) => {
-			//get random name and image
-			fetch(API_URL)
-				.then((response) => response.json())
-				.then((responseData) => {
-					photoURL = responseData.results[0].picture.large;
-					displayName = responseData.results[0].name.first + ' ' + responseData.results[0].name.last;
-				})
-				.catch((error) => console.log(error));
 			if (user) {
 				setUserUID(user.uid);
 				setUserEmail(user.email);
-
-				//if user does not have a photoURL and displayName, assign random.
-				if (user.displayName == null || user.photoURL == null) {
-					//update user profile
-					user
-						.updateProfile({
-							displayName: displayName,
-							photoURL: photoURL
-						})
-						.then(function() {
-							// Update successful.
-						})
-						.catch(function(error) {
-							// An error happened.
-						});
-
-					setUserName(displayName);
-					setUserPhoto(photoURL);
-				} else {
-					setUserName(user.displayName);
-					setUserPhoto(user.photoURL);
-				}
-				console.log(user);
+				setUserName(user.displayName);
+				setUserPhoto(user.photoURL);
 				navigation.navigate('Chat');
 			} else {
 				navigation.navigate('Login');
@@ -97,7 +65,6 @@ export default function ChatScreen({ navigation, route }) {
 	}
 
 	function sendMessages(newMessages) {
-		console.log(newMessages);
 		const newMessage = newMessages[0];
 		db.add(newMessage);
 	}

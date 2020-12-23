@@ -9,8 +9,6 @@ export default function SignUpScreen({ navigation }) {
 	const [ password, setPassword ] = useState('');
 	const [ cPassword, setCPassword ] = useState('');
 	const [ feedback, setFeedback ] = useState('');
-	const [ avatar, setAvatar ] = useState('');
-
 
 	const auth = firebase.auth();
 

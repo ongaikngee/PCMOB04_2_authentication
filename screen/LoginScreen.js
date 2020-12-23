@@ -31,8 +31,6 @@ export default function LoginScreen({ navigation}) {
 			});
 	};
 
-	// const testRoute = () => alert(JSON.stringify(route.params.room));
-
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
 			<View style={styles.container}>
@@ -67,8 +65,6 @@ export default function LoginScreen({ navigation}) {
 					</TouchableOpacity>
 				</View>
 				<Text style={styles.errorText}>{errorText}</Text>
-				{/* <Button title="Go to Chat" onPress={() => navigation.navigate('Chat')} /> */}
-				{/* <Button onPress={testRoute} title="Testing Button" /> */}
 			</View>
 		</TouchableWithoutFeedback>
 	);

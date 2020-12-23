@@ -1,50 +1,75 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import firebase from '../database/firebaseDB';
 
-// const db = firebase.firestore().collection('rooms').doc("rooms").collection("room02");
-// const db = firebase.firestore().collection('rooms').doc("rooms");
+const auth = firebase.auth();
 
-// const db = firebase.firestore().collection('rooms');
-
-export default function RoomsScreen({navigation}) {
+export default function RoomsScreen({ navigation }) {
 	const [ data, setData ] = useState([ { id: '1', room: 'room01' }, { id: '2', room: 'room02' } ]);
-	// const [data, setData] = useState([]);
+
+	const API_URL = 'https://randomuser.me/api/?inc=picture,name';
+	let photoURL = null;
+	let displayName = null;
+
+	//get random name and image
+	fetch(API_URL)
+		.then((response) => response.json())
+		.then((responseData) => {
+			photoURL = responseData.results[0].picture.large;
+			displayName = responseData.results[0].name.first + ' ' + responseData.results[0].name.last;
+		})
+		.catch((error) => console.log(error));
 
 	useEffect(() => {
-		// Load data and store in DATA.
-		//FireStore .get() methods
-		// db.get().then((snapshot) => {
-		// 	const data = snapshot.docs.map((doc) => ({
-		// 		id: doc.id,
-		// 		...doc.data(),
-		// 	}));
-		// 	setData(data);
-		// 	console.log("All data in 'rooms' collection", data);
-		// });
+		const unSubAuth = auth.onAuthStateChanged((user) => {
+			if (user) {
+				if (user.displayName == null || user.photoURL == null) {
+					//update user profile
+					user
+						.updateProfile({
+							displayName: displayName,
+							photoURL: photoURL
+						})
+						.then(function() {
+							// Update successful.
+						})
+						.catch(function(error) {
+							// An error happened.
+						});
+				}
+				navigation.navigate('Rooms');
+			} else {
+				navigation.navigate('Login');
+			}
+		});
 
-		//using onSnapshot
-		// const unsub = db.onSnapshot((snapshot)=>{
-		// 	const data =  snapshot.docs.map((doc)=>({
-		// 		id:doc.id,
-		// 		...doc.data(),
-		// 	}));
-		// 	setData(data);
-		// });
-		// return unsub();
-		console.log(data);
+		// This sets up the top right button
+		navigation.setOptions({
+			headerRight: () => (
+				<TouchableOpacity onPress={logout}>
+					<MaterialCommunityIcons name="logout" size={20} color="black" style={{ marginRight: 20 }} />
+				</TouchableOpacity>
+			)
+		});
+
+		return () => {
+			unSubAuth();
+		};
 	}, []);
 
-	const room1 = () => console.log('going to room1');
-	const room2 = () => console.log('going to room2');
-
-	const room = (item) => console.log('going to rooming', item);
+	function logout() {
+		auth.signOut();
+	}
 
 	const renderItem = ({ item }) => {
 		return (
-			<View style = {styles.flatlistContainer}>
+			<View style={styles.flatlistContainer}>
 				<Text style={styles.title}>{item.room}</Text>
-				<TouchableOpacity onPress={()=>navigation.navigate('Chat',{...item})} style={styles.flatlistButton}>
+				<TouchableOpacity
+					onPress={() => navigation.navigate('Chat', { ...item })}
+					style={styles.flatlistButton}
+				>
 					<Text style={styles.flatlistButtonText}>Enter Chat</Text>
 				</TouchableOpacity>
 			</View>
@@ -52,7 +77,7 @@ export default function RoomsScreen({navigation}) {
 	};
 
 	return (
-		<View>
+		<View style={styles.container}>
 			<FlatList data={data} renderItem={renderItem} keyExtractor={(item) => item.id} />
 		</View>
 	);
@@ -60,26 +85,26 @@ export default function RoomsScreen({navigation}) {
 
 const styles = StyleSheet.create({
 	container: {
-		flex: 1
+		flex: 1,
+		backgroundColor: '#D1B490'
 	},
 	title: {
-		fontSize: 32,
-		// padding: 10,
-		// backgroundColor: 'orange'
+		fontSize: 32
 	},
-	flatlistContainer:{
-		flexDirection:'row',
-		justifyContent:'space-between',
-		backgroundColor: 'orange',
+	flatlistContainer: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		backgroundColor: '#EE7B30',
+		marginTop: 5,
 		marginBottom: 15,
-		padding: 10,
+		padding: 10
 	},
-	flatlistButton:{
-		borderWidth:1,
-		borderRadius:15,
-		padding:10,
+	flatlistButton: {
+		borderWidth: 1,
+		borderRadius: 15,
+		padding: 10
 	},
-	flatlistButtonText:{
-		fontSize:24,
+	flatlistButtonText: {
+		fontSize: 24
 	}
 });
