@@ -4,10 +4,12 @@ import firebase from '../database/firebaseDB';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { GiftedChat } from 'react-native-gifted-chat';
 
-const db = firebase.firestore().collection('messages');
-const auth = firebase.auth();
+// const db = firebase.firestore().collection('messages');
 
-export default function ChatScreen({ navigation }) {
+export default function ChatScreen({ navigation, route }) {
+	const db = firebase.firestore().collection('rooms').doc('rooms').collection(route.params.room);
+	const auth = firebase.auth();
+
 	const [ messages, setMessages ] = useState([]);
 	const [ userUID, setUserUID ] = useState('');
 	const [ userEmail, setUserEmail ] = useState('');
@@ -24,16 +26,16 @@ export default function ChatScreen({ navigation }) {
 		const unsubscribeAuth = auth.onAuthStateChanged((user) => {
 			//get random name and image
 			fetch(API_URL)
-			.then((response) => response.json())
-			.then((responseData) => {
-				photoURL = responseData.results[0].picture.large;
-				displayName = responseData.results[0].name.first + ' ' + responseData.results[0].name.last;
-			})
-			.catch((error) => console.log(error));
+				.then((response) => response.json())
+				.then((responseData) => {
+					photoURL = responseData.results[0].picture.large;
+					displayName = responseData.results[0].name.first + ' ' + responseData.results[0].name.last;
+				})
+				.catch((error) => console.log(error));
 			if (user) {
 				setUserUID(user.uid);
 				setUserEmail(user.email);
-				
+
 				//if user does not have a photoURL and displayName, assign random.
 				if (user.displayName == null || user.photoURL == null) {
 					//update user profile

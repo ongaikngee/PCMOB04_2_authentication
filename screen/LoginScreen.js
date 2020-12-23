@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import firebase from '../database/firebaseDB';
 
-export default function LoginScreen({ navigation }) {
+export default function LoginScreen({ navigation}) {
 	const [ email, setEmail ] = useState('');
 	const [ password, setPassword ] = useState('');
 	const [ errorText, setErrorText ] = useState('');
@@ -30,6 +30,8 @@ export default function LoginScreen({ navigation }) {
 				setErrorText(error.message);
 			});
 	};
+
+	// const testRoute = () => alert(JSON.stringify(route.params.room));
 
 	return (
 		<TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -66,6 +68,7 @@ export default function LoginScreen({ navigation }) {
 				</View>
 				<Text style={styles.errorText}>{errorText}</Text>
 				{/* <Button title="Go to Chat" onPress={() => navigation.navigate('Chat')} /> */}
+				{/* <Button onPress={testRoute} title="Testing Button" /> */}
 			</View>
 		</TouchableWithoutFeedback>
 	);
