@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import firebase from '../database/firebaseDB';
 
 const auth = firebase.auth();
+const db = firebase.firestore().collection('rooms');
 
 export default function RoomsScreen({ navigation }) {
-	const [ data, setData ] = useState([ { id: '1', room: 'room01' }, { id: '2', room: 'room02' } ]);
+	const [ data, setData ] = useState([]);
+	const [ textInput, setTextInput ] = useState('');
 
 	const API_URL = 'https://randomuser.me/api/?inc=picture,name';
 	let photoURL = null;
@@ -53,14 +55,42 @@ export default function RoomsScreen({ navigation }) {
 			)
 		});
 
+		const unSubSnapShot = db.onSnapshot((snapshot) => {
+			const roomArray = snapshot.docs.map((doc) => {
+				const room = {
+					...doc.data(),
+					id: doc.id
+				};
+				return room;
+			});
+			console.log('A');
+			console.log(roomArray);
+			setData(roomArray);
+		});
+
 		return () => {
 			unSubAuth();
+			unSubSnapShot();
 		};
 	}, []);
 
 	function logout() {
 		auth.signOut();
 	}
+
+	const addRoom = () => {
+		db
+			.add({
+				room: textInput
+			})
+			.then(function(docRef) {
+				setTextInput('');
+				console.log('Document written with ID: ', docRef.id);
+			})
+			.catch(function(error) {
+				console.error('Error adding document: ', error);
+			});
+	};
 
 	const renderItem = ({ item }) => {
 		return (
@@ -78,6 +108,12 @@ export default function RoomsScreen({ navigation }) {
 
 	return (
 		<View style={styles.container}>
+			<View style={styles.addRoomContainer}>
+				<TextInput value={textInput} onChangeText={(input) => setTextInput(input)} style={styles.textInput} />
+				<TouchableOpacity onPress={addRoom} style={styles.addRoomButton}>
+					<Text style={styles.flatlistButtonText}>Add Room</Text>
+				</TouchableOpacity>
+			</View>
 			<FlatList data={data} renderItem={renderItem} keyExtractor={(item) => item.id} />
 		</View>
 	);
@@ -86,25 +122,50 @@ export default function RoomsScreen({ navigation }) {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: '#D1B490'
+		backgroundColor: '#DAB785'
 	},
 	title: {
-		fontSize: 32
+		fontSize: 24,
+		color:"#031D44",
 	},
 	flatlistContainer: {
 		flexDirection: 'row',
 		justifyContent: 'space-between',
-		backgroundColor: '#EE7B30',
+		backgroundColor: '#D5896F',
 		marginTop: 5,
-		marginBottom: 15,
-		padding: 10
+		marginBottom: 2,
+		padding: 10,
+		paddingLeft:20,
+		paddingRight:20,
 	},
 	flatlistButton: {
 		borderWidth: 1,
 		borderRadius: 15,
-		padding: 10
+		borderColor: '#031D44',
+		padding: 10,
+		// flex: 2
 	},
 	flatlistButtonText: {
-		fontSize: 24
+		fontSize: 18,
+		color:'#031D44',
+	},
+	addRoomContainer: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		// backgroundColor: 'brown',
+		padding:20,
+		marginBottom:10,
+		borderBottomWidth:2,
+	},
+	addRoomButton: {
+		backgroundColor: '#D5896F',
+		padding:10,
+		borderRadius:10,
+	},
+	textInput: {
+		borderWidth: 1,
+		fontSize: 24,
+		flex:1,
+		marginRight:15,
 	}
 });

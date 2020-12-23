@@ -27,6 +27,6 @@ export default function ChatStack() {
 
 const styles = StyleSheet.create({
 	header: {
-		backgroundColor: '#EE7B30'
+		backgroundColor: '#70A288'
 	}
 });
