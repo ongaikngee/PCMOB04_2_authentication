@@ -47,8 +47,10 @@ export default function ChatScreen({ navigation, route }) {
 				const data = doc.data();
 				const returnData = {
 					...doc.data(),
-					createdAt: new Date(data.createdAt.seconds * 1000) // convert to JS date object
+					createdAt: new Date(data.createdAt.seconds * 1000), // convert to JS date object
+					
 				};
+				// console.log(returnData);
 				return returnData;
 			});
 			setMessages(serverMessages);
@@ -65,9 +67,16 @@ export default function ChatScreen({ navigation, route }) {
 	}
 
 	function sendMessages(newMessages) {
-		const newMessage = newMessages[0];
+		console.log(newMessages);
+		const newMessage = {
+			...newMessages[0],
+			// received:true,
+			// image: "https://randomuser.me/api/portraits/women/31.jpg",
+			// system:true, 
+		};
 		db.add(newMessage);
 	}
+
 
 	return (
 		<GiftedChat
